@@ -25,11 +25,10 @@ mongoose
   .then(() => logInfo("connected to db"))
   .catch((error) => logError("error connecting to db:", error.message));
 
-const app = express();
+export const app = express();
 app.use(cors());
 app.use(express.json());
 app.use(requestLogger);
 app.use("/api/blogs", blogsRouter);
 app.use(unknownEndpoint);
 app.use(errorHandler);
-app.listen(PORT, () => logInfo(`Server running on port ${PORT}`));
