@@ -3,11 +3,11 @@ import { Blog } from "../models/blog.js";
 
 export const blogsRouter = express.Router();
 
-app.get("/api/blogs", (_request, response) => {
+blogsRouter.get("/", (_request, response) => {
   Blog.find({}).then((blogs) => response.json(blogs));
 });
 
-app.post("/api/blogs", (request, response) => {
+blogsRouter.post("/", (request, response) => {
   new Blog(request.body)
     .save()
     .then((result) => response.status(201).json(result));
