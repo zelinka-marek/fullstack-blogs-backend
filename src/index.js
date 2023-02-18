@@ -1,14 +1,12 @@
 import cors from "cors";
 import express from "express";
 import mongoose from "mongoose";
+import { MONGODB_URI, PORT } from "./utils/config.js";
 import { logError, logInfo } from "./utils/logger.js";
-
-const PORT = process.env.PORT;
-const mongoUrl = process.env.MONGODB_URI;
 
 logInfo("connecting to db");
 mongoose
-  .connect(mongoUrl)
+  .connect(MONGODB_URI)
   .then(() => logInfo("connected to db"))
   .catch((error) => logError("failed connecting to db", error.message));
 
