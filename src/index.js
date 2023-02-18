@@ -1,7 +1,7 @@
 import cors from "cors";
 import express from "express";
 import mongoose from "mongoose";
-import { Blog } from "./models/blog.js";
+import { blogsRouter } from "./routes/blogs";
 import { MONGODB_URI, PORT } from "./utils/config.js";
 import { logError, logInfo } from "./utils/logger.js";
 
@@ -14,15 +14,5 @@ mongoose
 const app = express();
 app.use(cors());
 app.use(express.json());
-
-app.get("/api/blogs", (_request, response) => {
-  Blog.find({}).then((blogs) => response.json(blogs));
-});
-
-app.post("/api/blogs", (request, response) => {
-  new Blog(request.body)
-    .save()
-    .then((result) => response.status(201).json(result));
-});
-
+app.use("/api/blogs", blogsRouter);
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
