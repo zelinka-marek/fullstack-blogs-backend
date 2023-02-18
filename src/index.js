@@ -1,7 +1,7 @@
 import cors from "cors";
 import express from "express";
 import mongoose from "mongoose";
-import { blogsRouter } from "./routes/blogs";
+import { blogsRouter } from "./routes/blogs.js";
 import { MONGODB_URI, PORT } from "./utils/config.js";
 import { logError, logInfo } from "./utils/logger.js";
 
