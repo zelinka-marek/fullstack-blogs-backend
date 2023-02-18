@@ -1,11 +1,16 @@
 import cors from "cors";
 import express from "express";
 import mongoose from "mongoose";
+import { logError, logInfo } from "./utils/logger.js";
 
 const PORT = process.env.PORT;
 const mongoUrl = process.env.MONGODB_URI;
 
-mongoose.connect(mongoUrl);
+logInfo("connecting to db");
+mongoose
+  .connect(mongoUrl)
+  .then(() => logInfo("connected to db"))
+  .catch((error) => logError("failed connecting to db", error.message));
 
 const blogSchema = new mongoose.Schema({
   title: String,
