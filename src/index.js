@@ -1,7 +1,8 @@
 import cors from "cors";
 import express from "express";
 import mongoose from "mongoose";
-import { MONGODB_URI, PORT } from "./utils/config.js";
+import { Blog } from "./models/blog.js";
+import { MONGODB_URI, PORT } from "./utils/config.jsPORT";
 import { logError, logInfo } from "./utils/logger.js";
 
 logInfo("connecting to db");
@@ -9,15 +10,6 @@ mongoose
   .connect(MONGODB_URI)
   .then(() => logInfo("connected to db"))
   .catch((error) => logError("failed connecting to db", error.message));
-
-const blogSchema = new mongoose.Schema({
-  title: String,
-  author: String,
-  url: String,
-  likes: Number,
-});
-
-const Blog = mongoose.model("Blog", blogSchema);
 
 const app = express();
 app.use(cors());
