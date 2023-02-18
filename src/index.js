@@ -2,7 +2,7 @@ import cors from "cors";
 import express from "express";
 import mongoose from "mongoose";
 import { Blog } from "./models/blog.js";
-import { MONGODB_URI, PORT } from "./utils/config.jsPORT";
+import { MONGODB_URI, PORT } from "./utils/config.js";
 import { logError, logInfo } from "./utils/logger.js";
 
 logInfo("connecting to db");
