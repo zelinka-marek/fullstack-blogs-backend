@@ -46,3 +46,27 @@ export function mostBlogs(blogs) {
     blogs: authorCount[topAuthor],
   };
 }
+
+export function mostLikes(blogs) {
+  if (!blogs.length) {
+    return null;
+  }
+
+  const likesCount = blogs.reduce((tally, blog) => {
+    tally[blog.author] = (tally[blog.author] || 0) + blog.likes;
+    return tally;
+  }, {});
+
+  const topAuthor = Object.keys(likesCount).reduce(
+    (prevAuthor, currentAuthor) => {
+      return likesCount[prevAuthor] > likesCount[currentAuthor]
+        ? prevAuthor
+        : currentAuthor;
+    }
+  );
+
+  return {
+    author: topAuthor,
+    likes: likesCount[topAuthor],
+  };
+}

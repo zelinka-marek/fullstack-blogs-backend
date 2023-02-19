@@ -3,6 +3,7 @@ import {
   dummy,
   favoriteBlog,
   mostBlogs,
+  mostLikes,
   totalLikes,
 } from "../src/utils/list.js";
 
@@ -125,6 +126,24 @@ describe("mostBlogs", () => {
     expect(result).toEqual({
       author: "Robert C. Martin",
       blogs: 3,
+    });
+  });
+});
+
+describe("mostLikes", () => {
+  test("when list is empty, equals to null", () => {
+    const emptyList = [];
+    const result = mostLikes(emptyList);
+
+    expect(result).toBeNull();
+  });
+
+  test("when list has multiple blogs", () => {
+    const result = mostLikes(blogs);
+
+    expect(result).toEqual({
+      author: "Edsger W. Dijkstra",
+      likes: 17,
     });
   });
 });
