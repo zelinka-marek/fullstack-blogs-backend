@@ -12,8 +12,16 @@ export function favoriteBlog(blogs) {
     return null;
   }
 
-  const maxLikes = Math.max(...blogs.map((blog) => blog.likes));
-  const favoriteBlog = blogs.find((blog) => blog.likes === maxLikes);
+  const favorite = blogs.reduce((prevBlog, currentBlog) => {
+    return prevBlog.likes > currentBlog.likes ? prevBlog : currentBlog;
+  });
+
+  return {
+    title: favorite.title,
+    author: favorite.author,
+    likes: favorite.likes,
+  };
+}
 
   return {
     title: favoriteBlog.title,

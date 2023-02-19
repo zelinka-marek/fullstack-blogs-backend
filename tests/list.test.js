@@ -96,8 +96,7 @@ describe("favoriteBlog", () => {
   });
 
   test("when list has multiple blogs", () => {
-    const list = blogs;
-    const result = favoriteBlog(list);
+    const result = favoriteBlog(blogs);
 
     expect(result).toEqual({
       title: "Canonical string reduction",
