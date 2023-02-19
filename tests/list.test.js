@@ -1,5 +1,10 @@
 import { describe, expect, test } from "vitest";
-import { dummy, favoriteBlog, totalLikes } from "../src/utils/list.js";
+import {
+  dummy,
+  favoriteBlog,
+  mostBlogs,
+  totalLikes,
+} from "../src/utils/list.js";
 
 const blogs = [
   {
@@ -102,6 +107,24 @@ describe("favoriteBlog", () => {
       title: "Canonical string reduction",
       author: "Edsger W. Dijkstra",
       likes: 12,
+    });
+  });
+});
+
+describe("mostBlogs", () => {
+  test("when list is empty, equals to null", () => {
+    const emptyList = [];
+    const result = mostBlogs(emptyList);
+
+    expect(result).toBeNull();
+  });
+
+  test("when list has multiple blogs", () => {
+    const result = mostBlogs(blogs);
+
+    expect(result).toEqual({
+      author: "Robert C. Martin",
+      blogs: 3,
     });
   });
 });

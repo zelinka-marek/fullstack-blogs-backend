@@ -23,9 +23,26 @@ export function favoriteBlog(blogs) {
   };
 }
 
+export function mostBlogs(blogs) {
+  if (!blogs.length) {
+    return null;
+  }
+
+  const authorCount = blogs.reduce((tally, blog) => {
+    tally[blog.author] = (tally[blog.author] || 0) + 1;
+    return tally;
+  }, {});
+
+  const topAuthor = Object.keys(authorCount).reduce(
+    (prevAuthor, currentAuthor) => {
+      return authorCount[prevAuthor] > authorCount[currentAuthor]
+        ? prevAuthor
+        : currentAuthor;
+    }
+  );
+
   return {
-    title: favoriteBlog.title,
-    author: favoriteBlog.author,
-    likes: maxLikes,
+    author: topAuthor,
+    blogs: authorCount[topAuthor],
   };
 }
