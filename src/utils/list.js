@@ -33,7 +33,7 @@ export function mostBlogs(blogs) {
     return tally;
   }, {});
 
-  const topAuthor = Object.keys(authorCount).reduce(
+  const topByBlogs = Object.keys(authorCount).reduce(
     (prevAuthor, currentAuthor) => {
       return authorCount[prevAuthor] > authorCount[currentAuthor]
         ? prevAuthor
@@ -42,8 +42,8 @@ export function mostBlogs(blogs) {
   );
 
   return {
-    author: topAuthor,
-    blogs: authorCount[topAuthor],
+    author: topByBlogs,
+    blogs: authorCount[topByBlogs],
   };
 }
 
@@ -57,7 +57,7 @@ export function mostLikes(blogs) {
     return tally;
   }, {});
 
-  const topAuthor = Object.keys(likesCount).reduce(
+  const topByLikes = Object.keys(likesCount).reduce(
     (prevAuthor, currentAuthor) => {
       return likesCount[prevAuthor] > likesCount[currentAuthor]
         ? prevAuthor
@@ -66,7 +66,7 @@ export function mostLikes(blogs) {
   );
 
   return {
-    author: topAuthor,
-    likes: likesCount[topAuthor],
+    author: topByLikes,
+    likes: likesCount[topByLikes],
   };
 }
