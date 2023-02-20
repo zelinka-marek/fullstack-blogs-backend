@@ -36,6 +36,7 @@ test("a valid blog can be added", async () => {
     author: "Michael Chan",
     url: "https://reactpatterns.com/",
   };
+
   const response = await api.post("/api/blogs").send(validBlog);
   expect(response.status).toBe(201);
   expect(response.header["content-type"]).toMatch(/application\/json/);
@@ -52,6 +53,7 @@ test("if likes propery is missing, defaults to 0", async () => {
     author: "Michael Chan",
     url: "https://reactpatterns.com/",
   };
+
   const response = await api.post("/api/blogs").send(validBlog);
   expect(response.body.likes).toBe(0);
 });
@@ -61,6 +63,7 @@ test("blog without title or url is not added", async () => {
     author: "Michael Chan",
     likes: 0,
   };
+
   const response = await api.post("/api/blogs").send(invalidBlog);
   expect(response.status).toBe(400);
 
@@ -80,4 +83,20 @@ test("deletion of a note", async () => {
 
   const titles = blogsAtEnd.map((blog) => blog.title);
   expect(titles).not.toContainEqual(blogToDelete.title);
+});
+
+test("update of a note", async () => {
+  const blogsAtStart = await getBlogsFromDatabase();
+  const blogToUpdate = blogsAtStart[0];
+  const updatedBlog = {
+    ...blogToUpdate,
+    likes: 8,
+  };
+
+  const response = await api
+    .put(`/api/blogs/${blogToUpdate.id}`)
+    .send(updatedBlog);
+  expect(response.status).toBe(200);
+  expect(response.header["content-type"]).toMatch(/application\/json/);
+  expect(response.body).toStrictEqual(updatedBlog);
 });
