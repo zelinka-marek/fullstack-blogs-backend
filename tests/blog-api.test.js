@@ -97,17 +97,19 @@ describe("when there are initially some blogs saved", () => {
     test("succeeds with status 204 if id is valid", async () => {
       const blogsAtStart = await getBlogsFromDatabase();
       const blogToUpdate = blogsAtStart[0];
-      const updatedBlog = {
-        ...blogToUpdate,
-        likes: 8,
-      };
 
       const response = await api
         .put(`/api/blogs/${blogToUpdate.id}`)
-        .send(updatedBlog);
+        .send({ likes: 8 });
       expect(response.status).toBe(200);
       expect(response.header["content-type"]).toMatch(/application\/json/);
-      expect(response.body).toStrictEqual(updatedBlog);
+      expect(response.body.likes).toBe(blogToUpdate.likes + 1);
+
+      const blogsAtEnd = await getBlogsFromDatabase();
+      expect(blogsAtEnd.length).toBe(blogsAtStart.length);
+
+      const updatedBlog = blogsAtEnd[0];
+      expect(updatedBlog.likes).toBe(blogToUpdate.likes + 1);
     });
   });
 });
