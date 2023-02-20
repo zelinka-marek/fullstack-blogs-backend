@@ -4,14 +4,15 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "start": "node -r dotenv/config src/index.js",
-    "dev": "nodemon -r dotenv/config src/index.js",
+    "start": "cross-env NODE_ENV=production node src/index.js",
+    "dev": "cross-env NODE_ENV=development nodemon src/index.js",
     "lint": "eslint .",
-    "test": "vitest"
+    "test": "cross-env NODE_ENV=test vitest"
   },
   "prettier": {},
   "dependencies": {
     "cors": "^2.8.5",
+    "cross-env": "^7.0.3",
     "dotenv": "^16.0.3",
     "express": "^4.18.2",
     "mongoose": "^6.9.2"
