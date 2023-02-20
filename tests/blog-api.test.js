@@ -55,3 +55,15 @@ test("if likes propery is missing, defaults to 0", async () => {
   const response = await api.post("/api/blogs").send(validBlog);
   expect(response.body.likes).toBe(0);
 });
+
+test("blog without title or url is not added", async () => {
+  const invalidBlog = {
+    author: "Michael Chan",
+    likes: 0,
+  };
+  const response = await api.post("/api/blogs").send(invalidBlog);
+  expect(response.status).toBe(400);
+
+  const blogsAtEnd = await getBlogsFromDatabase();
+  expect(blogsAtEnd).toHaveLength(initialBlogs.length);
+});
