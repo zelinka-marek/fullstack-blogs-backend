@@ -45,3 +45,13 @@ test("a valid blog can be added", async () => {
   const authors = blogsAtEnd.map((blog) => blog.author);
   expect(authors).toContainEqual(validBlog.author);
 });
+
+test("if likes propery is missing, defaults to 0", async () => {
+  const validBlog = {
+    title: "React patterns",
+    author: "Michael Chan",
+    url: "https://reactpatterns.com/",
+  };
+  const response = await api.post("/api/blogs").send(validBlog);
+  expect(response.body.likes).toBe(0);
+});
