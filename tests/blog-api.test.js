@@ -64,3 +64,10 @@ test("all blogs are returned", async () => {
   const response = await api.get("/api/blogs");
   expect(response.body).toHaveLength(initialBlogs.length);
 });
+
+test("blogs have a unique identifier property named id", async () => {
+  const response = await api.get("/api/blogs");
+  const blogToView = response.body[0];
+  expect(blogToView.id).toBeDefined();
+  expect(blogToView._id).not.toBeDefined();
+});
