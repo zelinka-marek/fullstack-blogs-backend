@@ -42,8 +42,8 @@ test("a valid blog can be added", async () => {
 
   const blogsAtEnd = await getBlogsFromDatabase();
   expect(blogsAtEnd).toHaveLength(initialBlogs.length + 1);
-  const authors = blogsAtEnd.map((blog) => blog.author);
-  expect(authors).toContainEqual(validBlog.author);
+  const titles = blogsAtEnd.map((blog) => blog.title);
+  expect(titles).toContainEqual(validBlog.title);
 });
 
 test("if likes propery is missing, defaults to 0", async () => {
@@ -66,4 +66,18 @@ test("blog without title or url is not added", async () => {
 
   const blogsAtEnd = await getBlogsFromDatabase();
   expect(blogsAtEnd).toHaveLength(initialBlogs.length);
+});
+
+test("deletion of a note", async () => {
+  const blogsAtStart = await getBlogsFromDatabase();
+  const blogToDelete = blogsAtStart[0];
+
+  const response = await api.delete(`/api/blogs/${blogToDelete.id}`);
+  expect(response.status).toBe(204);
+
+  const blogsAtEnd = await getBlogsFromDatabase();
+  expect(blogsAtEnd.length).toBe(blogsAtStart.length - 1);
+
+  const titles = blogsAtEnd.map((blog) => blog.title);
+  expect(titles).not.toContainEqual(blogToDelete.title);
 });
