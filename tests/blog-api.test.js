@@ -22,7 +22,7 @@ describe("when there are initially some blogs saved", () => {
   test("blogs are returned as json", async () => {
     const response = await api.get("/api/blogs");
     expect(response.status).toBe(200);
-    expect(response.header["content-type"]).toMatch(/application\/json/);
+    expect(response.get("content-type")).toMatch(/application\/json/);
   });
 
   test("all blogs are returned", async () => {
@@ -48,7 +48,7 @@ describe("when there are initially some blogs saved", () => {
 
       const response = await api.post("/api/blogs").send(validBlog);
       expect(response.status).toBe(201);
-      expect(response.header["content-type"]).toMatch(/application\/json/);
+      expect(response.get("content-type")).toMatch(/application\/json/);
 
       const blogsAtEnd = await getBlogsFromDatabase();
       expect(blogsAtEnd).toHaveLength(initialBlogs.length + 1);
@@ -65,7 +65,7 @@ describe("when there are initially some blogs saved", () => {
 
       const response = await api.post("/api/blogs").send(validBlog);
       expect(response.status).toBe(201);
-      expect(response.header["content-type"]).toMatch(/application\/json/);
+      expect(response.get("content-type")).toMatch(/application\/json/);
       expect(response.body.likes).toBe(0);
     });
 
@@ -108,7 +108,7 @@ describe("when there are initially some blogs saved", () => {
         .put(`/api/blogs/${blogToUpdate.id}`)
         .send({ likes: 8 });
       expect(response.status).toBe(200);
-      expect(response.header["content-type"]).toMatch(/application\/json/);
+      expect(response.get("content-type")).toMatch(/application\/json/);
       expect(response.body.likes).toBe(blogToUpdate.likes + 1);
 
       const blogsAtEnd = await getBlogsFromDatabase();
