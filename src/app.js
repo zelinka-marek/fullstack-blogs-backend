@@ -1,5 +1,6 @@
 import cors from "cors";
 import express from "express";
+import "express-async-errors";
 import mongoose from "mongoose";
 import { blogsRouter } from "./routes/blogs.js";
 import { usersRouter } from "./routes/users.js";
