@@ -2,6 +2,7 @@ import cors from "cors";
 import express from "express";
 import mongoose from "mongoose";
 import { blogsRouter } from "./routes/blogs.js";
+import { usersRouter } from "./routes/users.js";
 import { MONGODB_URI } from "./utils/config.js";
 import { logError, logInfo } from "./utils/logger.js";
 import {
@@ -23,5 +24,6 @@ app.use(cors());
 app.use(express.json());
 app.use(requestLogger);
 app.use("/api/blogs", blogsRouter);
+app.use("/api/users", usersRouter);
 app.use(unknownEndpoint);
 app.use(errorHandler);
