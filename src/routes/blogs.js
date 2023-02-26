@@ -5,7 +5,7 @@ import { User } from "../models/user.js";
 export const blogsRouter = express.Router();
 
 blogsRouter.get("/", async (_request, response) => {
-  const blogs = await Blog.find();
+  const blogs = await Blog.find().populate("user", { username: 1, name: 1 });
 
   response.json(blogs);
 });
