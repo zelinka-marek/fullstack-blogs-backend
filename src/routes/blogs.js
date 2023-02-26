@@ -1,5 +1,6 @@
 import express from "express";
 import { Blog } from "../models/blog.js";
+import { User } from "../models/user.js";
 
 export const blogsRouter = express.Router();
 
@@ -10,10 +11,21 @@ blogsRouter.get("/", async (_request, response) => {
 });
 
 blogsRouter.post("/", async (request, response) => {
-  const blog = new Blog(request.body);
-  const savedBlog = await blog.save();
+  const data = request.body;
 
-  response.status(201).json(savedBlog);
+  const user = await User.findById(data.userId);
+
+  const blog = await new Blog({
+    title: data.title,
+    author: data.author,
+    url: data.url,
+    user: user.id,
+  }).save();
+
+  user.blogs = user.blogs.concat(blog._id);
+  await user.save();
+
+  response.status(201).json(blog);
 });
 
 blogsRouter.delete("/:id", async (request, response) => {
