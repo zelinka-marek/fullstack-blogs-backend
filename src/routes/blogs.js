@@ -16,11 +16,12 @@ blogsRouter.post("/", async (request, response) => {
   const data = request.body;
 
   const decodedToken = jwt.verify(request.token, SECRET);
-  if (!decodedToken.id) {
+  const userId = decodedToken.id;
+  if (!userId) {
     return response.status(401).json({ error: "invalid token" });
   }
 
-  const user = await User.findById(decodedToken.id);
+  const user = await User.findById(userId);
 
   const blog = await new Blog({
     title: data.title,
@@ -36,6 +37,17 @@ blogsRouter.post("/", async (request, response) => {
 });
 
 blogsRouter.delete("/:id", async (request, response) => {
+  const decodedToken = jwt.verify(request.token, SECRET);
+  const userId = decodedToken.id;
+  if (!userId) {
+    return response.status(401).json({ error: "invalid token" });
+  }
+
+  const blog = await Blog.findById(request.params.id);
+  if (blog.user.toString() !== userId.toString()) {
+    return response.status(403).json({ error: "not your blog" });
+  }
+
   await Blog.findByIdAndDelete(request.params.id);
 
   response.status(204).end();
