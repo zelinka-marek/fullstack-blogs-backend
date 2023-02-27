@@ -26,6 +26,8 @@ export function errorHandler(error, _request, response, next) {
     });
 
     return response.status(400).json({ errors });
+  } else if (error.name === "JsonWebTokenError") {
+    return response.status(401).json({ error: error.message });
   }
 
   next(error);

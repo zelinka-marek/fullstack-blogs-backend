@@ -1,6 +1,8 @@
 import express from "express";
+import jwt from "jsonwebtoken";
 import { Blog } from "../models/blog.js";
 import { User } from "../models/user.js";
+import { SECRET } from "../utils/config.js";
 
 export const blogsRouter = express.Router();
 
@@ -10,10 +12,22 @@ blogsRouter.get("/", async (_request, response) => {
   response.json(blogs);
 });
 
+function getToken(request) {
+  const authorization = request.get("authorization");
+  const token = authorization?.match(/^bearer (.+)$/i).at(1) ?? null;
+
+  return token;
+}
+
 blogsRouter.post("/", async (request, response) => {
   const data = request.body;
 
-  const user = await User.findById(data.userId);
+  const decodedToken = jwt.verify(getToken(request), SECRET);
+  if (!decodedToken.id) {
+    return response.status(401).json({ error: "invalid token" });
+  }
+
+  const user = await User.findById(decodedToken.id);
 
   const blog = await new Blog({
     title: data.title,
