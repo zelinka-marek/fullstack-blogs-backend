@@ -1,8 +1,6 @@
 import express from "express";
-import jwt from "jsonwebtoken";
 import { Blog } from "../models/blog.js";
-import { User } from "../models/user.js";
-import { SECRET } from "../utils/config.js";
+import { userExtractor } from "../utils/middleware.js";
 
 export const blogsRouter = express.Router();
 
@@ -12,21 +10,13 @@ blogsRouter.get("/", async (_request, response) => {
   response.json(blogs);
 });
 
-blogsRouter.post("/", async (request, response) => {
-  const data = request.body;
-
-  const decodedToken = jwt.verify(request.token, SECRET);
-  const userId = decodedToken.id;
-  if (!userId) {
-    return response.status(401).json({ error: "invalid token" });
-  }
-
-  const user = await User.findById(userId);
+blogsRouter.post("/", userExtractor, async (request, response) => {
+  const { user, body } = request;
 
   const blog = await new Blog({
-    title: data.title,
-    author: data.author,
-    url: data.url,
+    title: body.title,
+    author: body.author,
+    url: body.url,
     user: user.id,
   }).save();
 
@@ -36,19 +26,15 @@ blogsRouter.post("/", async (request, response) => {
   response.status(201).json(blog);
 });
 
-blogsRouter.delete("/:id", async (request, response) => {
-  const decodedToken = jwt.verify(request.token, SECRET);
-  const userId = decodedToken.id;
-  if (!userId) {
-    return response.status(401).json({ error: "invalid token" });
-  }
+blogsRouter.delete("/:id", userExtractor, async (request, response) => {
+  const { user, params } = request;
 
-  const blog = await Blog.findById(request.params.id);
-  if (blog.user.toString() !== userId.toString()) {
+  const blog = await Blog.findById(params.id);
+  if (blog.user.toString() !== user._id.toString()) {
     return response.status(403).json({ error: "not your blog" });
   }
 
-  await Blog.findByIdAndDelete(request.params.id);
+  await blog.delete();
 
   response.status(204).end();
 });

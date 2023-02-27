@@ -1,3 +1,6 @@
+import jwt from "jsonwebtoken";
+import { User } from "../models/user.js";
+import { SECRET } from "./config.js";
 import { logError, logInfo } from "./logger.js";
 
 export function requestLogger(request, _response, next) {
@@ -38,6 +41,21 @@ export function tokenExtractor(request, _response, next) {
   const token = authorization?.match(/^bearer (.+)$/i).at(1) ?? null;
 
   request.token = token;
+
+  next();
+}
+
+export async function userExtractor(request, response, next) {
+  if (request.token) {
+    const decodedToken = jwt.verify(request.token, SECRET);
+    if (!decodedToken?.id) {
+      return response.status(401).json({ error: "invalid token" });
+    }
+
+    const user = await User.findById(decodedToken.id);
+
+    request.user = user;
+  }
 
   next();
 }
