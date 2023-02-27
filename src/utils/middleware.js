@@ -46,16 +46,17 @@ export function tokenExtractor(request, _response, next) {
 }
 
 export async function userExtractor(request, response, next) {
-  if (request.token) {
-    const decodedToken = jwt.verify(request.token, SECRET);
-    if (!decodedToken?.id) {
-      return response.status(401).json({ error: "invalid token" });
-    }
-
-    const user = await User.findById(decodedToken.id);
-
-    request.user = user;
+  const decodedToken = jwt.verify(request.token, SECRET);
+  if (!decodedToken?.id) {
+    return response.status(401).json({ error: "invalid token" });
   }
+
+  const user = await User.findById(decodedToken.id);
+  if (!user) {
+    return response.status(401).json({ error: "not authenticated" });
+  }
+
+  request.user = user;
 
   next();
 }

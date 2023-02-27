@@ -1,24 +1,41 @@
 import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
 import mongoose from "mongoose";
 import supertest from "supertest";
 import { afterAll, beforeEach, describe, expect, test } from "vitest";
 import { app } from "../src/app.js";
 import { Blog } from "../src/models/blog.js";
 import { User } from "../src/models/user.js";
+import { SECRET } from "../src/utils/config.js";
 import {
   getBlogsFromDatabase,
   getUsersFromDatabase,
   initialBlogs,
+  initialUser,
 } from "./blog-helpers.js";
 
 const api = supertest(app);
 
-beforeEach(async () => {
-  await Blog.deleteMany();
-  await Blog.insertMany(initialBlogs);
-});
-
 describe("when there are initially some blogs saved", () => {
+  let token;
+
+  beforeEach(async () => {
+    await User.deleteMany();
+    const passwordHash = await bcrypt.hash(initialUser.password, 10);
+    const user = await new User({
+      username: initialUser.username,
+      passwordHash,
+    }).save();
+
+    const tokenPayload = { usernmae: user.name, id: user._id };
+    token = jwt.sign(tokenPayload, SECRET);
+
+    await Blog.deleteMany();
+    for (const blog of initialBlogs) {
+      await new Blog({ ...blog, user: user._id }).save();
+    }
+  });
+
   test("blogs are returned as json", async () => {
     const response = await api.get("/api/blogs");
     expect(response.status).toBe(200);
@@ -46,7 +63,10 @@ describe("when there are initially some blogs saved", () => {
         url: "https://reactpatterns.com/",
       };
 
-      const response = await api.post("/api/blogs").send(validBlog);
+      const response = await api
+        .post("/api/blogs")
+        .set("Authorization", `Bearer ${token}`)
+        .send(validBlog);
       expect(response.status).toBe(201);
       expect(response.get("content-type")).toMatch(/application\/json/);
 
@@ -63,7 +83,10 @@ describe("when there are initially some blogs saved", () => {
         url: "https://reactpatterns.com/",
       };
 
-      const response = await api.post("/api/blogs").send(validBlog);
+      const response = await api
+        .post("/api/blogs")
+        .set("Authorization", `Bearer ${token}`)
+        .send(validBlog);
       expect(response.status).toBe(201);
       expect(response.get("content-type")).toMatch(/application\/json/);
       expect(response.body.likes).toBe(0);
@@ -75,8 +98,25 @@ describe("when there are initially some blogs saved", () => {
         likes: 0,
       };
 
-      const response = await api.post("/api/blogs").send(invalidBlog);
+      const response = await api
+        .post("/api/blogs")
+        .set("Authorization", `Bearer ${token}`)
+        .send(invalidBlog);
       expect(response.status).toBe(400);
+
+      const blogsAtEnd = await getBlogsFromDatabase();
+      expect(blogsAtEnd).toHaveLength(initialBlogs.length);
+    });
+
+    test("fails with status 401 if auth token is not provided", async () => {
+      const validBlog = {
+        title: "React patterns",
+        author: "Michael Chan",
+        url: "https://reactpatterns.com/",
+      };
+
+      const response = await api.post("/api/blogs").send(validBlog);
+      expect(response.status).toBe(401);
 
       const blogsAtEnd = await getBlogsFromDatabase();
       expect(blogsAtEnd).toHaveLength(initialBlogs.length);
@@ -88,7 +128,9 @@ describe("when there are initially some blogs saved", () => {
       const blogsAtStart = await getBlogsFromDatabase();
       const blogToDelete = blogsAtStart[0];
 
-      const response = await api.delete(`/api/blogs/${blogToDelete.id}`);
+      const response = await api
+        .delete(`/api/blogs/${blogToDelete.id}`)
+        .set("Authorization", `Bearer ${token}`);
       expect(response.status).toBe(204);
 
       const blogsAtEnd = await getBlogsFromDatabase();
@@ -124,8 +166,8 @@ describe("when there is initialy one user saved", () => {
   beforeEach(async () => {
     await User.deleteMany();
 
-    const passwordHash = await bcrypt.hash("salainen", 10);
-    await new User({ username: "admin", passwordHash }).save();
+    const passwordHash = await bcrypt.hash(initialUser.password, 10);
+    await new User({ username: initialUser.username, passwordHash }).save();
   });
 
   test("users is returned as json", async () => {

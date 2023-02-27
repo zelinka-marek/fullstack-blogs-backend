@@ -1,6 +1,8 @@
 import { Blog } from "../src/models/blog.js";
 import { User } from "../src/models/user.js";
 
+export const initialUser = { username: "admin", password: "salainen" };
+
 export const initialBlogs = [
   {
     id: "5a422a851b54a676234d17f7",
