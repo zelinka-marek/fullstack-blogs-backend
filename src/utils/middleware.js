@@ -32,3 +32,12 @@ export function errorHandler(error, _request, response, next) {
 
   next(error);
 }
+
+export function tokenExtractor(request, _response, next) {
+  const authorization = request.get("authorization");
+  const token = authorization?.match(/^bearer (.+)$/i).at(1) ?? null;
+
+  request.token = token;
+
+  next();
+}
