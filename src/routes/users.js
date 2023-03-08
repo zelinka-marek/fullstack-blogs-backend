@@ -2,9 +2,9 @@ import bcrypt from "bcryptjs";
 import express from "express";
 import { User } from "../models/user.js";
 
-export const usersRouter = express.Router();
+export const userRouter = express.Router();
 
-usersRouter.get("/", async (_request, response) => {
+userRouter.get("/", async (_request, response) => {
   const users = await User.find().populate("blogs", {
     url: 1,
     title: 1,
@@ -14,7 +14,7 @@ usersRouter.get("/", async (_request, response) => {
   response.json(users);
 });
 
-usersRouter.post("/", async (request, response) => {
+userRouter.post("/", async (request, response) => {
   const data = request.body;
 
   if (!data.password) {

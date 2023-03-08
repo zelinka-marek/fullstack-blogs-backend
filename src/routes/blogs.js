@@ -2,15 +2,15 @@ import express from "express";
 import { Blog } from "../models/blog.js";
 import { userExtractor } from "../utils/middleware.js";
 
-export const blogsRouter = express.Router();
+export const blogRouter = express.Router();
 
-blogsRouter.get("/", async (_request, response) => {
+blogRouter.get("/", async (_request, response) => {
   const blogs = await Blog.find().populate("user", { username: 1, name: 1 });
 
   response.json(blogs);
 });
 
-blogsRouter.post("/", userExtractor, async (request, response) => {
+blogRouter.post("/", userExtractor, async (request, response) => {
   const { user, body } = request;
 
   const blog = await new Blog({
@@ -26,7 +26,7 @@ blogsRouter.post("/", userExtractor, async (request, response) => {
   response.status(201).json(blog);
 });
 
-blogsRouter.delete("/:id", userExtractor, async (request, response) => {
+blogRouter.delete("/:id", userExtractor, async (request, response) => {
   const { user, params } = request;
 
   const blog = await Blog.findById(params.id);
@@ -39,7 +39,7 @@ blogsRouter.delete("/:id", userExtractor, async (request, response) => {
   response.status(204).end();
 });
 
-blogsRouter.put("/:id", async (request, response) => {
+blogRouter.put("/:id", async (request, response) => {
   const data = request.body;
 
   const updatedBlog = await Blog.findByIdAndUpdate(

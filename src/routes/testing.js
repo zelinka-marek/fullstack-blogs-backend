@@ -2,9 +2,9 @@ import express from "express";
 import { User } from "../models/user.js";
 import { Blog } from "../models/blog.js";
 
-export const testingRouter = express.Router();
+export const testRouter = express.Router();
 
-testingRouter.post("/reset", async (_request, response) => {
+testRouter.post("/reset", async (_request, response) => {
   await User.deleteMany();
   await Blog.deleteMany();
 
